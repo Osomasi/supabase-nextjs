@@ -79,7 +79,7 @@ export default function AccountForm({ user }: { user: User | null }) {
   }
 
   return (
-    <div className="form-widget">
+    <div className="form-widget text-black">
       <div>
         <label htmlFor="email">Email</label>
         <input className='text-black' id="email" type="text" value={user?.email} disabled />

@@ -5,7 +5,7 @@ import { FaPlayCircle } from "react-icons/fa";
 
 export default function Home() {
   const [fileName, setFileName] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
+  const [filex, setFile] = useState<File | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>();
   const [transcription, setTranscription] = useState<string | null>(null);
 
@@ -26,25 +26,17 @@ export default function Home() {
     event.stopPropagation();
 
     const file = event.dataTransfer.files[0];
-    if (file) {
+
+    // now we can focus on api
+
+    if ((file && file.type.includes("audio")) || file.type.includes("video")) {
       setFileName(file.name);
-      setFile(file)
-      // send file to open ai
-      try {
-        const formData = new FormData();
-        formData.append('file', file)
-
-        const response = await fetch('./api/openai/transcribe', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-        setTranscription(result.transcription)
-      } catch (error) {
-        alert(error);
-      }
+      setFile(file);
+      const formData = new FormData();
+      formData.append("file", file);
+      console.log("FormData created: ", file);
     } else {
+      console.log(file.type.includes("audio") || file.type.includes("video"));
       alert("Please upload a valid MP3 or MP4 file.");
     }
   };
@@ -53,43 +45,45 @@ export default function Home() {
     const file = event.target.files?.[0];
     if (file) {
       setFileName(file.name);
-      setFile(file)
+      setFile(file);
       console.log("filename: ", file);
-      try {
-        const formData = new FormData();
-        formData.append('file', file)
-
-        const response = await fetch('./api/openai/transcribe', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-        setTranscription(result.transcription)
-      } catch (error) {
-        alert("Please upload a valid MP3 or MP4 file.");
-      }
-    } else {;
-      alert("Please upload a valid MP3 or MP4 ;file.");
+    } else {
+      console.log("Please upload a valid MP3 or MP4 file.");
     }
   };
-  
+
   const handleDragOver = (event: React.DragEvent) => {
     event.preventDefault();
     event.stopPropagation();
-  }
+  };
 
   const handleUpload = async () => {
-    if (fileName) {
+    if (filex) {
       const formData = new FormData();
-      formData.append("file", fileName);
+      formData.append("file", filex);
 
-      const file = formData.get("file")
+      const file = formData.get("file");
 
-      console.log(file)
+      console.log("FILE: ", file);
 
+      // send file to open ai
       try {
-        console.log(fileName);;
+        const response = await fetch("/api/transcribe", {
+          method: "POST",
+          body: formData,
+        });
+        console.log("sent file to server: ");
+
+        if (!response.ok) {
+          console.error(`Error: Something wrong`);
+        } else {
+          console.log("got file from server: ", response.text);
+        }
+
+        const result = await response.json();
+
+        console.log("RESULT: ", result)
+        setTranscription(result.transcription);
       } catch (error) {
         console.error(error);
       }
@@ -105,7 +99,7 @@ export default function Home() {
         className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 p-10 rounded-lg"
       >
         <FaPlayCircle color="gray" className="text-6xl cursor-pointer" />
-        <p className="mt-4">Drag and drop an audio or video file</p>
+        <p className="mt-4 self-center">Drag and drop an audio or video file</p>
         <input
           type="file"
           hidden
@@ -124,9 +118,9 @@ export default function Home() {
       >
         Upload
       </button>
-      {transcription && <p className="mt-2 text-sm text-gray-500">{transcription}</p>}
-
+      {transcription && (
+        <p className="mt-2 text-sm text-gray-500">{transcription}</p>
+      )}
     </div>
   );
 }
-// setting up open ai keys and folder
