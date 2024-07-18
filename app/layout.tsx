@@ -16,7 +16,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} flex flex-col items-center justify-center min-h-screen`}>
+        <div className="w-full flex justify-center py-8">
+          <img src="/path-to-your-logo.png" alt="Logo" className="h-16 w-16" />
+        </div>
+        <main className="flex-grow w-full flex justify-center items-center">
+          <div className="bg-white shadow-lg rounded-lg p-8 m-8 sm:m-8 max-w-screen-lg w-full">
+            {children}
+          </div>
+        </main>
+      </body>
     </html>
   );
 }
