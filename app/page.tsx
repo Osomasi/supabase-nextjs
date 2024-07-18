@@ -1,5 +1,4 @@
 "use client";
-import { transcribeFile } from "@/utils/openai";
 import { createClient } from "@/utils/supabase/client";
 import { ChangeEvent, useEffect, useState } from "react";
 import { FaPlayCircle } from "react-icons/fa";
@@ -32,8 +31,16 @@ export default function Home() {
       setFile(file)
       // send file to open ai
       try {
-        const result = await transcribeFile(file);        
-        setTranscription(result.transcription);
+        const formData = new FormData();
+        formData.append('file', file)
+
+        const response = await fetch('./api/openai/transcribe', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+        setTranscription(result.transcription)
       } catch (error) {
         alert(error);
       }
@@ -49,7 +56,15 @@ export default function Home() {
       setFile(file)
       console.log("filename: ", file);
       try {
-        const result = await transcribeFile(file)
+        const formData = new FormData();
+        formData.append('file', file)
+
+        const response = await fetch('./api/openai/transcribe', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
         setTranscription(result.transcription)
       } catch (error) {
         alert("Please upload a valid MP3 or MP4 file.");
