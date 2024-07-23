@@ -83,7 +83,7 @@ export default function Home() {
         const result = await response.json();
 
         console.log("RESULT: ", result)
-        setTranscription(result.transcription);
+        setTranscription(result.text);
       } catch (error) {
         console.error(error);
       }
@@ -99,7 +99,7 @@ export default function Home() {
         className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 p-10 rounded-lg"
       >
         <FaPlayCircle color="gray" className="text-6xl cursor-pointer" />
-        <p className="mt-4 self-center">Drag and drop an audio or video file</p>
+        <p className="mt-4 self-center text-white">Drag and drop an audio or video file</p>
         <input
           type="file"
           hidden

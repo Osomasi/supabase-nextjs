@@ -17,7 +17,7 @@
 }
 
 body {
-  @apply bg-gradient-to-r from-gray-100 to-gray-300;
+  @apply bg-gradient-to-r from-gray-700 to-black;
   background-size: 200% 200%;
   animation: gradient-animation 4s ease infinite;
 }

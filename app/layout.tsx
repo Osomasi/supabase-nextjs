@@ -16,12 +16,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} flex flex-col items-center justify-center min-h-screen`}>
-        <div className="w-full flex justify-center py-8">
-          <img src="/path-to-your-logo.png" alt="Logo" className="h-16 w-16" />
+      <body className={`${inter.className} flex flex-col items-center justify-center min-h-screen text-white`}>
+        <div className="w-full flex flex-col justify-center items-center py-8">
+          <div className="flex items-center space-x-4">
+            <span className="text-4xl font-bold">Transcrypto</span>
+            <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3v18c-4.418 0-8-3.582-8-8s3.582-8 8-8z"></path>
+              <path d="M15 14.154l5.164 2.98a1 1 0 001.372-.49l1-2.5a1 1 0 00-.49-1.372L16.883 12 15 14.154z"></path>
+            </svg>
+          </div>
+          <p className="mt-2 text-lg italic">Any audio or video, we can tell you about it.</p>
         </div>
         <main className="flex-grow w-full flex justify-center items-center">
-          <div className="bg-white shadow-lg rounded-lg p-8 m-8 sm:m-8 max-w-screen-lg w-full">
+          <div className=" flex border border-blue-300 shadow-lg rounded-lg p-8 m-8 sm:m-8 max-w-screen-lg w-full justify-center">
             {children}
           </div>
         </main>
