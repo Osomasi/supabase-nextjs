@@ -8,6 +8,7 @@ export default function Home() {
   const [filex, setFile] = useState<File | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>();
   const [transcription, setTranscription] = useState<string | null>(null);
+  const [summary, setSummary] = useState<string | null>(null);
 
   const supabase = createClient();
 
@@ -27,7 +28,7 @@ export default function Home() {
 
     const file = event.dataTransfer.files[0];
 
-    // now we can focus on api
+    // api call
 
     if ((file && file.type.includes("audio")) || file.type.includes("video")) {
       setFileName(file.name);
@@ -82,8 +83,19 @@ export default function Home() {
 
         const result = await response.json();
 
-        console.log("RESULT: ", result)
-        setTranscription(result.text);
+        console.log("RESULT: ", result) 
+        setTranscription(result.transcription.text);
+        setSummary(result.summary.message.content)
+        // as this works, we need to save this to a db in supabase per user
+        // I think there was an issue with authentication because when I create an account it says an error, but still signs me in, share UI with me i ll try to make new acc
+        // send access for terminal I cant give until you req for some reason -- sent the summary UI on discord with the transcrption yea i saw it. kill terminal done reopen now
+        // its working without login :D
+        // yeah it is supposed to work like that, users dont have to have an account. But it will save to DB if they do.
+        // I want to add a button on the upper right to say login or record depending on sign in how can i signup
+        // were you able to make an account? i dk how Sorry, something went wrong
+        // it should be /login i tried signup but showing this ^^^
+        // same here -- lemme check db okay i ll come after 15 min
+        
       } catch (error) {
         console.error(error);
       }
@@ -92,7 +104,7 @@ export default function Home() {
 
   return (
     <div className="relative flex flex-col items-center justify-center h-full w-full text-black space-y-10">
-      <div className="absolute top-4 right-4">{userEmail}</div>
+      <div className="absolute top-4 right-4 text-white">{userEmail}</div>
       <div
         onDrop={handleFileDrop}
         onDragOver={handleDragOver}
@@ -118,9 +130,9 @@ export default function Home() {
       >
         Upload
       </button>
-      {transcription && (
         <p className="mt-2 text-sm text-gray-500">{transcription}</p>
-      )}
+        <p className="mt-2 text-sm text-gray-500">{summary}</p>
+
     </div>
   );
 }

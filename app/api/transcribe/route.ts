@@ -15,6 +15,9 @@ export const config = {
   },
 };
 
+// I have stored the summarised text inside the response back
+// in line 112
+
 // Convert Web Stream to Node Stream
 async function streamToBuffer(stream: ReadableStream<Uint8Array>): Promise<Buffer> {
   const reader = stream.getReader();
@@ -64,6 +67,24 @@ async function transcribe(filename: fs.PathLike, apiKey: any) {
   }
 }
 
+// summarise with generative text
+async function summarizeText(text: string, apiKey: string) {
+  try {
+    const openai = new OpenAI({ apiKey });
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      // prompt: `Summarize the following text:\n\n${text}`,
+      messages: [{role: "system", content:`Summarize the following text:\n\n${text}`}],
+      max_tokens: 150,
+    });
+
+    console.log(response.choices[0]);
+    return response.choices[0];
+  } catch (error) {
+    console.error("Error generating summary:", error);
+    throw new Error("Failed to generate summary");
+  }
+}
 
 export async function POST(req: NextRequest) {
   const body = await streamToBuffer(req.body as unknown as ReadableStream<Uint8Array>);
@@ -86,7 +107,17 @@ export async function POST(req: NextRequest) {
         const transcription = await transcribe(filePath, openaiApiKey as string);
         console.log("trans: ", transcription);
 
-        return resolve(new NextResponse(JSON.stringify(transcription), { status: 200 }));
+        // summary log calls summariseText Function
+        console.log("Summarising text");
+        const summary = await summarizeText(transcription!.text, openaiApiKey as any)
+        console.log("Summary:", summary); 
+
+        // send transcription and summary back to client 
+        // yeah, but It looks like I can send multiple responses,  lets look what it returns first. can i see terminal and ui
+        // yeah request access and we can run it. It gives the summary inside a content: -- and transcription is text: nice what is problem
+        // how would you display this on frontend?
+        return resolve(new NextResponse(JSON.stringify({transcription, summary}), { status: 200 }));
+
       } catch (error) {
         console.error("Error transcribing file:", error);
         return resolve(new NextResponse(JSON.stringify({ error: "Failed to transcribe file" }), { status: 500 }));
@@ -94,3 +125,5 @@ export async function POST(req: NextRequest) {
     });
   });
 }
+
+
